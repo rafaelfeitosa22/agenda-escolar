@@ -5,7 +5,7 @@ node_modules
 .env*.local
 *.db
 *.db-journal
-storage/
+/storage/
 prisma/sqlite/
 next-env.d.ts
 *.tsbuildinfo

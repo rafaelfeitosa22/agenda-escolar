@@ -39,24 +39,39 @@ export class GeminiAgendaAI implements AgendaAIService {
           ...(withSchema ? { responseJsonSchema: RESPONSE_SCHEMA } : {}),
         },
       }),
-      signal: AbortSignal.timeout(90_000),
+      signal: AbortSignal.timeout(35_000),
     });
     return { status: res.status, body: (await res.json().catch(() => ({}))) as GeminiResponse };
   }
 
   async extractEventsFromImage(image: AgendaImage, ctx: ExtractContext): Promise<RawResult> {
     let r;
-    try {
-      r = await this.call(image, ctx, true);
+    let withSchema = true;
+    // O plano gratuito às vezes responde 503 (modelo sobrecarregado) ou 429 momentâneo:
+    // tenta até 3 vezes, esperando um pouco mais a cada tentativa.
+    const WAIT_MS = [0, 1500, 4000];
+    for (let attempt = 0; ; attempt++) {
+      if (WAIT_MS[attempt]) await new Promise((res) => setTimeout(res, WAIT_MS[attempt]));
+      try {
+        r = await this.call(image, ctx, withSchema);
+      } catch (err) {
+        console.error(`[ia] Falha de rede ao chamar o Gemini (tentativa ${attempt + 1}):`, err);
+        if (attempt < WAIT_MS.length - 1) continue;
+        throw new AIUnavailableError("Não foi possível falar com a IA agora. Tente novamente em instantes.");
+      }
       // Se o modelo não aceitar o schema, tenta de novo pedindo só JSON; o zod valida depois.
-      if (r.status === 400 && /schema/i.test(r.body.error?.message ?? "")) r = await this.call(image, ctx, false);
-    } catch (err) {
-      console.error("[ia] Falha de rede ao chamar o Gemini:", err);
-      throw new AIUnavailableError("Não foi possível falar com a IA agora. Tente novamente em instantes.");
+      if (r.status === 400 && withSchema && /schema/i.test(r.body.error?.message ?? "")) {
+        withSchema = false;
+        attempt--;
+        continue;
+      }
+      const transient = r.status === 429 || r.status >= 500;
+      if (r.status !== 200) console.error(`[ia] Gemini respondeu ${r.status} (modelo ${this.model}, tentativa ${attempt + 1}):`, r.body.error?.status, r.body.error?.message);
+      if (!transient || attempt >= WAIT_MS.length - 1) break;
     }
 
-    if (r.status !== 200) console.error(`[ia] Gemini respondeu ${r.status} (modelo ${this.model}):`, r.body.error?.status, r.body.error?.message);
     if (r.status === 429) throw new AIUnavailableError("O limite gratuito de leituras por foto foi atingido. Tente mais tarde ou preencha manualmente.");
+    if (r.status >= 500) throw new AIUnavailableError("A IA do Google está sobrecarregada agora. Tente de novo em alguns minutos ou preencha manualmente.");
     if (r.status === 404) throw new AIUnavailableError(`O modelo de IA "${this.model}" não está disponível para esta chave.`);
     if (r.status === 400 || r.status === 401 || r.status === 403) {
       const why = /api key|API_KEY/i.test(r.body.error?.message ?? "") ? "a chave do Gemini foi recusada" : "o Gemini recusou o pedido";

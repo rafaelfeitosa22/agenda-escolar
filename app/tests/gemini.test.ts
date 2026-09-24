@@ -34,6 +34,22 @@ describe("provedor Gemini", () => {
     expect(JSON.parse(fetchMock.mock.calls[1][1].body).generationConfig.responseJsonSchema).toBeUndefined();
   });
 
+  it("503 (modelo sobrecarregado) é tentado de novo e pode dar certo", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ error: { code: 503, message: "The model is overloaded", status: "UNAVAILABLE" } }), { status: 503 }))
+      .mockResolvedValueOnce(ok(mockResult("single", "2026-09-23")));
+    vi.stubGlobal("fetch", fetchMock);
+    const r = await new GeminiAgendaAI().extractEventsFromImage(image, ctx);
+    expect(r.eventos[0].titulo).toBe("Passeio ao Zoológico");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("503 persistente vira mensagem de IA sobrecarregada", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 503 })));
+    await expect(new GeminiAgendaAI().extractEventsFromImage(image, ctx)).rejects.toThrow(/sobrecarregada/);
+  });
+
   it("limite gratuito atingido vira erro tratável, não evento inventado", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 429 })));
     await expect(new GeminiAgendaAI().extractEventsFromImage(image, ctx)).rejects.toBeInstanceOf(AIUnavailableError);

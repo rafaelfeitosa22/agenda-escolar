@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { GeminiAgendaAI } from "@/server/ai/gemini";
+import { GeminiAgendaAI, rankFlashModels } from "@/server/ai/gemini";
 import { mockResult } from "@/server/ai/mock";
 import { AIUnavailableError } from "@/server/ai/types";
 
@@ -48,6 +48,38 @@ describe("provedor Gemini", () => {
   it("503 persistente vira mensagem de IA sobrecarregada", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 503 })));
     await expect(new GeminiAgendaAI().extractEventsFromImage(image, ctx)).rejects.toThrow(/sobrecarregada/);
+  });
+
+  it("modelo sobrecarregado: passa para outro modelo flash liberado para a chave", async () => {
+    const calls: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        calls.push(url.replace(/^.*\/v1beta\//, ""));
+        if (url.endsWith("/models?pageSize=200")) {
+          return new Response(JSON.stringify({ models: [
+            { name: "models/gemini-3.6-flash", supportedGenerationMethods: ["generateContent"] },
+            { name: "models/gemini-3.6-flash-lite", supportedGenerationMethods: ["generateContent"] },
+            { name: "models/gemini-3.6-flash-image", supportedGenerationMethods: ["generateContent"] },
+            { name: "models/text-embedding-9", supportedGenerationMethods: ["embedContent"] },
+          ] }), { status: 200 });
+        }
+        if (url.includes("gemini-3.6-flash-lite:")) return ok(mockResult("single", "2026-09-23"));
+        return new Response(JSON.stringify({ error: { code: 503, message: "overloaded", status: "UNAVAILABLE" } }), { status: 503 });
+      }),
+    );
+    const r = await new GeminiAgendaAI().extractEventsFromImage(image, ctx);
+    expect(r.eventos[0].titulo).toBe("Passeio ao Zoológico");
+    expect(calls.filter((c) => c.startsWith("models/gemini-3.6-flash:")).length).toBe(3);
+    expect(calls.some((c) => c.includes("flash-image"))).toBe(false);
+  });
+
+  it("ordena os modelos flash do mais novo para o mais antigo, ignorando os especiais", () => {
+    expect(rankFlashModels(["gemini-2.5-flash", "gemini-3.6-flash-lite", "gemini-3.6-flash", "gemini-3.6-flash-tts", "gemini-3.5-pro"])).toEqual([
+      "gemini-3.6-flash",
+      "gemini-3.6-flash-lite",
+      "gemini-2.5-flash",
+    ]);
   });
 
   it("limite gratuito atingido vira erro tratável, não evento inventado", async () => {

@@ -1,11 +1,15 @@
 // Provedor Google Gemini. Ativado com AI_PROVIDER=gemini e GEMINI_API_KEY (chave do Google AI Studio).
 // Usa a API REST diretamente (sem SDK). O plano gratuito tem limite diário de chamadas e o Google
 // pode usar o conteúdo enviado para melhorar os produtos dele — veja DEPLOY.md.
+//
+// O plano gratuito às vezes responde 503 (modelo sobrecarregado) por longos períodos, e o Google
+// aposenta modelos com frequência (404). Por isso, além de tentar de novo, o provedor consulta a
+// lista de modelos liberados para a chave e passa para outro modelo "flash" quando o configurado falha.
 import { z } from "zod";
 import { SYSTEM_PROMPT, userPrompt } from "./prompt";
 import { AIUnavailableError, rawResultSchema, type AgendaAIService, type AgendaImage, type ExtractContext, type RawResult } from "./types";
 
-const BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+const BASE = "https://generativelanguage.googleapis.com/v1beta";
 
 // JSON Schema da resposta, gerado do mesmo schema zod que valida o resultado.
 const { $schema: _ignored, ...RESPONSE_SCHEMA } = z.toJSONSchema(rawResultSchema) as Record<string, unknown>;
@@ -15,16 +19,33 @@ type GeminiResponse = {
   promptFeedback?: { blockReason?: string };
   error?: { code: number; message: string; status: string };
 };
+type Call = { status: number; body: GeminiResponse };
+
+const MAX_MODELS = 4;
+const RETRY_WAIT_MS = [0, 1500, 4000];
+
+/** Ordena modelos "flash" do mais novo para o mais antigo (ex.: 3.6-flash antes de 3.5-flash-lite). */
+export function rankFlashModels(names: string[]): string[] {
+  const version = (n: string) => Number(n.match(/gemini-(\d+(?:\.\d+)?)/)?.[1] ?? 0);
+  return names
+    .filter((n) => /^gemini-[\d.]+-flash/.test(n) && !/(image|tts|audio|live|embed|thinking-exp|native)/.test(n))
+    .sort((a, b) => version(b) - version(a) || Number(/lite/.test(a)) - Number(/lite/.test(b)) || a.length - b.length);
+}
 
 export class GeminiAgendaAI implements AgendaAIService {
   readonly name = "gemini";
   private key = process.env.GEMINI_API_KEY ?? "";
   private model = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+  private available: Promise<string[]> | null = null;
 
-  private async call(image: AgendaImage, ctx: ExtractContext, withSchema: boolean) {
-    const res = await fetch(`${BASE}/${encodeURIComponent(this.model)}:generateContent`, {
+  private headers() {
+    return { "Content-Type": "application/json", "x-goog-api-key": this.key };
+  }
+
+  private async call(model: string, image: AgendaImage, ctx: ExtractContext, withSchema: boolean): Promise<Call> {
+    const res = await fetch(`${BASE}/models/${encodeURIComponent(model)}:generateContent`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": this.key },
+      headers: this.headers(),
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
         contents: [
@@ -44,40 +65,70 @@ export class GeminiAgendaAI implements AgendaAIService {
     return { status: res.status, body: (await res.json().catch(() => ({}))) as GeminiResponse };
   }
 
-  async extractEventsFromImage(image: AgendaImage, ctx: ExtractContext): Promise<RawResult> {
-    let r;
+  /** Modelos "flash" que esta chave pode usar para generateContent (consultado uma vez por instância). */
+  private listModels(): Promise<string[]> {
+    this.available ??= fetch(`${BASE}/models?pageSize=200`, { headers: this.headers(), signal: AbortSignal.timeout(10_000) })
+      .then((r) => r.json())
+      .then((j: { models?: { name: string; supportedGenerationMethods?: string[] }[] }) =>
+        rankFlashModels((j.models ?? []).filter((m) => m.supportedGenerationMethods?.includes("generateContent")).map((m) => m.name.replace(/^models\//, ""))),
+      )
+      .catch((err) => {
+        console.error("[ia] Não foi possível listar os modelos do Gemini:", err);
+        this.available = null;
+        return [];
+      });
+    return this.available;
+  }
+
+  /** Tenta um modelo, repetindo em erros passageiros (503/5xx/429/rede). */
+  private async tryModel(model: string, image: AgendaImage, ctx: ExtractContext, retries: number): Promise<Call | null> {
     let withSchema = true;
-    // O plano gratuito às vezes responde 503 (modelo sobrecarregado) ou 429 momentâneo:
-    // tenta até 3 vezes, esperando um pouco mais a cada tentativa.
-    const WAIT_MS = [0, 1500, 4000];
-    for (let attempt = 0; ; attempt++) {
-      if (WAIT_MS[attempt]) await new Promise((res) => setTimeout(res, WAIT_MS[attempt]));
+    let last: Call | null = null;
+    for (let attempt = 0; attempt < retries; attempt++) {
+      if (RETRY_WAIT_MS[attempt]) await new Promise((res) => setTimeout(res, RETRY_WAIT_MS[attempt]));
       try {
-        r = await this.call(image, ctx, withSchema);
+        last = await this.call(model, image, ctx, withSchema);
       } catch (err) {
-        console.error(`[ia] Falha de rede ao chamar o Gemini (tentativa ${attempt + 1}):`, err);
-        if (attempt < WAIT_MS.length - 1) continue;
-        throw new AIUnavailableError("Não foi possível falar com a IA agora. Tente novamente em instantes.");
+        console.error(`[ia] Falha de rede com ${model} (tentativa ${attempt + 1}):`, err);
+        continue;
       }
-      // Se o modelo não aceitar o schema, tenta de novo pedindo só JSON; o zod valida depois.
-      if (r.status === 400 && withSchema && /schema/i.test(r.body.error?.message ?? "")) {
+      // Se o modelo não aceitar o schema, repete pedindo só JSON; o zod valida depois.
+      if (last.status === 400 && withSchema && /schema/i.test(last.body.error?.message ?? "")) {
         withSchema = false;
         attempt--;
         continue;
       }
-      const transient = r.status === 429 || r.status >= 500;
-      if (r.status !== 200) console.error(`[ia] Gemini respondeu ${r.status} (modelo ${this.model}, tentativa ${attempt + 1}):`, r.body.error?.status, r.body.error?.message);
-      if (!transient || attempt >= WAIT_MS.length - 1) break;
+      if (last.status !== 200) console.error(`[ia] Gemini ${model} respondeu ${last.status} (tentativa ${attempt + 1}):`, last.body.error?.status, last.body.error?.message);
+      if (last.status === 200 || !(last.status === 429 || last.status >= 500)) return last;
+    }
+    return last;
+  }
+
+  async extractEventsFromImage(image: AgendaImage, ctx: ExtractContext): Promise<RawResult> {
+    const tried: string[] = [];
+    let r: Call | null = await this.tryModel(this.model, image, ctx, RETRY_WAIT_MS.length);
+    tried.push(this.model);
+
+    // Modelo sobrecarregado (5xx) ou aposentado (404): passa para outros modelos "flash" liberados.
+    if (!r || r.status >= 500 || r.status === 404) {
+      for (const alt of (await this.listModels()).filter((m) => m !== this.model).slice(0, MAX_MODELS - 1)) {
+        const next = await this.tryModel(alt, image, ctx, 1);
+        tried.push(alt);
+        if (next) r = next;
+        if (next && (next.status === 200 || next.status === 429 || (next.status >= 400 && next.status < 500 && next.status !== 404))) break;
+      }
+      if (r?.status === 200 && tried.length > 1) console.warn(`[ia] Leitura feita com o modelo alternativo ${tried[tried.length - 1]} (${this.model} indisponível). Considere trocar GEMINI_MODEL.`);
     }
 
+    if (!r) throw new AIUnavailableError("Não foi possível falar com a IA agora. Tente novamente em instantes.");
     if (r.status === 429) throw new AIUnavailableError("O limite gratuito de leituras por foto foi atingido. Tente mais tarde ou preencha manualmente.");
     if (r.status >= 500) throw new AIUnavailableError("A IA do Google está sobrecarregada agora. Tente de novo em alguns minutos ou preencha manualmente.");
-    if (r.status === 404) throw new AIUnavailableError(`O modelo de IA "${this.model}" não está disponível para esta chave.`);
+    if (r.status === 404) throw new AIUnavailableError(`Nenhum modelo de IA disponível para esta chave (tentados: ${tried.join(", ")}).`);
     if (r.status === 400 || r.status === 401 || r.status === 403) {
       const why = /api key|API_KEY/i.test(r.body.error?.message ?? "") ? "a chave do Gemini foi recusada" : "o Gemini recusou o pedido";
       throw new AIUnavailableError(`Leitura por foto indisponível: ${why} (erro ${r.status}).`);
     }
-    if (r.status >= 500 || !r.body.candidates) {
+    if (!r.body.candidates) {
       if (r.body.promptFeedback?.blockReason) return { legivel: false, texto_lido: "", eventos: [] };
       throw new AIUnavailableError(`Falha ao consultar a IA (${r.status}).`);
     }

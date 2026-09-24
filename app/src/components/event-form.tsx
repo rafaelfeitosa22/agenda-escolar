@@ -137,14 +137,12 @@ export function EventFields({
 
       {groups.includes("details") && (
         <>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Horário" highlight={hl("startTime")}>
-              <input type="time" className={`field-input ${low("startTime")}`} value={v.startTime} onChange={set("startTime")} />
-            </Field>
-            <Field label="Valor (R$)" error={errors.amount} highlight={hl("amount")}>
-              <input inputMode="decimal" className={`field-input ${low("amount")}`} value={v.amount} onChange={set("amount")} placeholder="0,00" aria-invalid={!!errors.amount} />
-            </Field>
-          </div>
+          <Field label="Horário" highlight={hl("startTime")}>
+            <input type="time" className={`field-input ${low("startTime")}`} value={v.startTime} onChange={set("startTime")} />
+          </Field>
+          <Field label="Valor (R$)" error={errors.amount} highlight={hl("amount")}>
+            <input inputMode="decimal" className={`field-input ${low("amount")}`} value={v.amount} onChange={set("amount")} placeholder="0,00" aria-invalid={!!errors.amount} />
+          </Field>
           <Field label="Local" highlight={hl("location")}>
             <input className={`field-input ${low("location")}`} value={v.location} onChange={set("location")} maxLength={120} />
           </Field>
@@ -159,14 +157,12 @@ export function EventFields({
           <details className="border-t-2 border-divider pt-3">
             <summary className="cursor-pointer py-2 text-[15px] font-extrabold">Mais opções</summary>
             <div className="flex flex-col gap-4 pt-3">
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Data final" error={errors.endDate}>
-                  <input type="date" className="field-input" value={v.endDate} onChange={set("endDate")} min={v.startDate || undefined} />
-                </Field>
-                <Field label="Horário final">
-                  <input type="time" className="field-input" value={v.endTime} onChange={set("endTime")} />
-                </Field>
-              </div>
+              <Field label="Data final" error={errors.endDate}>
+                <input type="date" className="field-input" value={v.endDate} onChange={set("endDate")} min={v.startDate || undefined} />
+              </Field>
+              <Field label="Horário final">
+                <input type="time" className="field-input" value={v.endTime} onChange={set("endTime")} />
+              </Field>
               <Field label="Responsável">
                 <input className="field-input" value={v.responsible} onChange={set("responsible")} maxLength={120} placeholder="Ex.: Professora Júlia" />
               </Field>
@@ -230,7 +226,7 @@ function Materials({ value, onChange, highlight }: { value: string[]; onChange: 
           placeholder="Ex.: Tesoura sem ponta"
           aria-label="Novo item para levar"
         />
-        <button type="button" onClick={add} className="h-12 flex-none border-2 border-ink px-4 font-extrabold hover:bg-surface">
+        <button type="button" onClick={add} className="min-h-12 flex-none border-2 border-ink px-4 font-extrabold hover:bg-surface">
           Adicionar
         </button>
       </div>

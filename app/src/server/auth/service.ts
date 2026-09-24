@@ -9,12 +9,12 @@ import { rateLimit, resetRateLimit } from "./rate-limit";
 const email = z.string().trim().toLowerCase().email("E-mail inválido.").max(160);
 const password = z.string().min(8, "A senha precisa ter pelo menos 8 caracteres.").max(200);
 
-export const registerSchema = z.object({ name: z.string().trim().min(2, "Informe seu nome.").max(80), email, password });
+export const registerSchema = z.object({ name: z.string().trim().min(2, "Informe o nome do aluno(a).").max(80), email, password });
 export const loginSchema = z.object({ email, password: z.string().min(1, "Informe a senha.").max(200) });
 export const forgotSchema = z.object({ email });
 export const resetSchema = z.object({ token: z.string().min(10).max(200), password });
 export const changePasswordSchema = z.object({ current: z.string().min(1).max(200), password });
-export const profileSchema = z.object({ name: z.string().trim().min(2, "Informe seu nome.").max(80), avatar: z.string().url().max(500).nullable().optional() });
+export const profileSchema = z.object({ name: z.string().trim().min(2, "Informe o nome do aluno(a).").max(80), avatar: z.string().url().max(500).nullable().optional() });
 
 export async function register(input: z.infer<typeof registerSchema>) {
   const exists = await prisma.user.findUnique({ where: { email: input.email } });

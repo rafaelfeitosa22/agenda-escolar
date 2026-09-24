@@ -75,8 +75,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
     <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
       <ErrorBox>{error}</ErrorBox>
       {mode === "cadastro" && (
-        <Field label="Seu nome">
-          <input className="field-input" value={v.name} onChange={set("name")} autoComplete="name" required />
+        <Field label="Nome do Aluno(a)">
+          <input className="field-input" value={v.name} onChange={set("name")} autoComplete="off" required />
         </Field>
       )}
       {mode !== "redefinir" && (

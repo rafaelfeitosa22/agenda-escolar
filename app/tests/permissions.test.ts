@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { can, canOnEvent } from "@/server/permissions";
 import { createEvent, deleteEvent, getEvent, listEvents, updateEvent } from "@/server/events/service";
-import { joinClass, leaveClass, listMembers, updateMember } from "@/server/classes/service";
+import { canCreateClass, createClass, joinClass, leaveClass, listMembers, updateMember } from "@/server/classes/service";
 import { ApiError } from "@/server/http";
 import { prisma } from "@/server/db";
 import { baseEvent, scenario } from "./helpers";
@@ -110,6 +110,21 @@ describe("isolamento e permissões por turma (backend)", () => {
     await leaveClass(s.member.id, s.cls.id);
     expect(await status(listEvents(s.member.id, s.cls.id))).toBe(404);
     expect(await status(leaveClass(s.admin.id, s.cls.id))).toBe(409);
+  });
+
+  it("só os e-mails em CLASS_CREATOR_EMAILS criam turmas", async () => {
+    const s = await scenario();
+    const allowed = await prisma.user.findUniqueOrThrow({ where: { id: s.admin.id } });
+    process.env.CLASS_CREATOR_EMAILS = ` outra@escola.dev , ${allowed.email.toUpperCase()} `;
+    try {
+      const input = { name: "Turma Nova", schoolName: "Escola Teste", year: 2026 };
+      expect(await status(createClass(s.member.id, input))).toBe(403);
+      expect(await status(createClass(s.admin.id, input))).toBe(200);
+      expect(canCreateClass("OUTRA@escola.dev")).toBe(true);
+      expect(canCreateClass("qualquer@familia.dev")).toBe(false);
+    } finally {
+      delete process.env.CLASS_CREATOR_EMAILS;
+    }
   });
 
   it("código inválido não revela turmas", async () => {

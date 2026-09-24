@@ -57,7 +57,8 @@ O bucket privado `agenda-fotos` é criado automaticamente no primeiro envio de f
    | `AI_PROVIDER` | `anthropic` |
    | `ANTHROPIC_API_KEY` | sua chave de https://console.anthropic.com |
    | `AI_MODEL` | `claude-opus-5` |
-   | `APP_URL` | a URL do app na Vercel, ex.: `https://agenda-da-turma.vercel.app` |
+   | `APP_URL` | a URL do app na Vercel, ex.: `https://agendaceneb.vercel.app` |
+   | `CLASS_CREATOR_EMAILS` | e-mail(s) de quem pode criar turmas, separados por vírgula |
 
    Sem `ANTHROPIC_API_KEY`, o app funciona normalmente, mas o "Cadastrar pela foto" mostra que a leitura está indisponível. Em produção ele **nunca** usa o modo de exemplo, que inventaria eventos.
 5. Clique em **Deploy**. O build roda `prisma generate`, depois `prisma migrate deploy`, que cria as tabelas no Supabase, e por fim `next build`.
@@ -67,7 +68,7 @@ O bucket privado `agenda-fotos` é criado automaticamente no primeiro envio de f
 O banco de produção começa **vazio**. O seed de exemplo só roda no SQLite local e se recusa a rodar em outro banco.
 
 1. Abra a URL da Vercel e clique em **Criar conta**.
-2. Em **Administrar uma turma**, crie a turma (ex.: *Jardim II - Vespertino*, *Escola CENEB Kids Águas Claras*). Você vira administrador(a).
+2. Entre com um e-mail listado em `CLASS_CREATOR_EMAILS` (só ele vê **Administrar uma turma**) e crie a turma (ex.: *Jardim II - Vespertino*, *Escola CENEB Kids Águas Claras*). Você vira administrador(a).
 3. Em **Membros**, compartilhe o **código de convite** com as famílias e aprove os pedidos de entrada.
 
 Com HTTPS, funcionam também o botão "Compartilhar" (menu nativo do celular), "Adicionar à tela inicial" (PWA) e o modo offline.

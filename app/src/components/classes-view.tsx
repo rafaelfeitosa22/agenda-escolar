@@ -10,7 +10,7 @@ import { Button, ErrorBox, Field, SectionHead } from "./ui";
 
 type Cls = { id: string; name: string; school: string; emoji: string; role: string; status: string };
 
-export function ClassesView({ userName, classes, initialCode }: { userName: string; classes: Cls[]; initialCode: string }) {
+export function ClassesView({ userName, classes, initialCode, canCreate }: { userName: string; classes: Cls[]; initialCode: string; canCreate: boolean }) {
   const router = useRouter();
   const [code, setCode] = useState(initialCode);
   const [joinMsg, setJoinMsg] = useState("");
@@ -111,8 +111,8 @@ export function ClassesView({ userName, classes, initialCode }: { userName: stri
         </Button>
       </form>
 
-      <SectionHead>Administrar uma turma</SectionHead>
-      {!creating ? (
+      {canCreate && <SectionHead>Administrar uma turma</SectionHead>}
+      {!canCreate ? null : !creating ? (
         <div className="px-5 pt-4">
           <Button onClick={() => setCreating(true)}>+ Criar nova turma</Button>
         </div>

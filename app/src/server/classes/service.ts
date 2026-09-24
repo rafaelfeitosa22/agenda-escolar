@@ -47,7 +47,23 @@ export async function listClasses(userId: string) {
   }));
 }
 
+/**
+ * Quem pode criar turmas: só os e-mails em CLASS_CREATOR_EMAILS (separados por vírgula).
+ * As famílias entram pelo código de convite. Sem a variável, ninguém cria em produção;
+ * em desenvolvimento e nos testes, qualquer conta pode criar.
+ */
+export function canCreateClass(email: string) {
+  const list = (process.env.CLASS_CREATOR_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  if (!list.length) return process.env.NODE_ENV !== "production";
+  return list.includes(email.trim().toLowerCase());
+}
+
 export async function createClass(userId: string, input: z.infer<typeof createClassSchema>) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { email: true } });
+  if (!canCreateClass(user.email)) throw new ApiError(403, "sem_permissao", "Só a administração da escola pode criar turmas. Peça o código de convite da sua turma.");
   return prisma.$transaction(async (tx) => {
     const school =
       (await tx.school.findFirst({ where: { name: input.schoolName } })) ??

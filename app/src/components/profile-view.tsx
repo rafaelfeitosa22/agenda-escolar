@@ -74,8 +74,8 @@ export function ProfileView({ user, classes }: { user: { name: string; email: st
       <SectionHead>Seus dados</SectionHead>
       <form onSubmit={saveProfile} className="flex flex-col gap-3 px-5 pt-4 pb-6">
         <ErrorBox>{err.profile}</ErrorBox>
-        <Field label="Nome">
-          <input className="field-input" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} autoComplete="name" />
+        <Field label="Nome do Aluno(a)">
+          <input className="field-input" value={name} onChange={(e) => setName(e.target.value)} maxLength={80} autoComplete="off" />
         </Field>
         <Button type="submit" disabled={name.trim() === user.name}>
           Salvar nome

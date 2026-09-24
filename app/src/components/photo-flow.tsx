@@ -59,6 +59,7 @@ export function PhotoFlow() {
   const [result, setResult] = useState<ReadAgendaResult | null>(null);
   const [failUpload, setFailUpload] = useState<string | null>(null);
   const [failMsg, setFailMsg] = useState("");
+  const [failCode, setFailCode] = useState("");
   const [items, setItems] = useState<Item[]>([]);
   const [idx, setIdx] = useState(0);
 
@@ -79,6 +80,7 @@ export function PhotoFlow() {
     } catch (err) {
       const e = err instanceof ApiClientError ? err : null;
       setFailUpload((e?.data.uploadId as string) ?? null);
+      setFailCode(e?.code ?? "");
       setFailMsg(e && e.code !== "nao_identificado" ? e.message : "");
       setPhase("error");
     } finally {
@@ -118,11 +120,17 @@ export function PhotoFlow() {
           <div className="px-5 pt-5 pb-4">
             <span className="kicker text-accent-700">📷 Cadastrar pela foto</span>
             <h1 className="text-[30px] leading-[1.1] font-extrabold tracking-[-0.015em]">
-              {phase === "error" ? "Não consegui identificar todas as informações dessa foto." : "Fotografe a página da agenda"}
+              {phase !== "error"
+                ? "Fotografe a página da agenda"
+                : failCode === "ia_indisponivel"
+                  ? "A leitura por foto está indisponível no momento."
+                  : "Não consegui identificar todas as informações dessa foto."}
             </h1>
             {phase === "pick" && <p className="mt-2 text-[15px] text-neutral-700">A IA lê o que a professora escreveu e monta a prévia. Nada é cadastrado sem você conferir e confirmar.</p>}
             {phase === "error" && (
-              <p className="mt-2 text-[15px] text-neutral-700">{failMsg || "Tente outra foto com boa luz e a página inteira enquadrada, ou preencha os dados você mesmo."}</p>
+              <p className="mt-2 text-[15px] text-neutral-700">{failCode === "ia_indisponivel"
+                  ? "A foto ficou guardada. Preencha os dados manualmente e ela será anexada ao evento."
+                  : failMsg || "Tente outra foto com boa luz e a página inteira enquadrada, ou preencha os dados você mesmo."}</p>
             )}
           </div>
           {preview && (

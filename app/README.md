@@ -34,6 +34,7 @@ Outros comandos: `npm test` (Vitest, usa `prisma/test.db` descartável), `npm ru
 A camada é desacoplada: a interface `AgendaAIService.extractEventsFromImage` fica em `src/server/ai/types.ts`, e o provedor é escolhido por `AI_PROVIDER`.
 
 - `mock` (dev): resposta determinística, sem rede. Só é usado quando configurado explicitamente; em produção sem provedor, a leitura por foto fica indisponível em vez de inventar eventos. `AI_MOCK_SCENARIO` = `multi` | `single` | `relativa` | `vazio` | `erro`.
+- `gemini`: Google Gemini pela API REST, com o mesmo schema de saída. Tem plano gratuito (com limite diário), e o Google pode usar as fotos enviadas. Defina `GEMINI_API_KEY`.
 - `anthropic`: Claude com visão e saída estruturada (schema zod). Defina `ANTHROPIC_API_KEY`. Modelo em `AI_MODEL` (padrão `claude-opus-5`). O fallback no servidor (`fallbacks: "default"`) fica ligado, para o caso de um classificador recusar a leitura.
 
 A IA só preenche a prévia. O servidor descarta valores inválidos em vez de adivinhar, como data inexistente, horário que não é horário ou valor negativo. Cada campo traz a confiança, e abaixo de 80% ele é destacado para revisão. Datas relativas precisam de confirmação explícita, e nada é cadastrado sem uma pessoa confirmar.

@@ -54,13 +54,15 @@ O bucket privado `agenda-fotos` é criado automaticamente no primeiro envio de f
    | `SUPABASE_SERVICE_ROLE_KEY` | chave service_role |
    | `SUPABASE_BUCKET` | `agenda-fotos` |
    | `MAX_UPLOAD_MB` | `4` (a Vercel aceita até 4,5 MB por requisição; o app já reduz a foto no celular) |
-   | `AI_PROVIDER` | `anthropic` |
-   | `ANTHROPIC_API_KEY` | sua chave de https://console.anthropic.com |
-   | `AI_MODEL` | `claude-opus-5` |
+   | `AI_PROVIDER` | `anthropic` (Claude) ou `gemini` (Google) |
+   | `ANTHROPIC_API_KEY` / `AI_MODEL` | com `anthropic`: chave de https://console.anthropic.com e `claude-opus-5` |
+   | `GEMINI_API_KEY` / `GEMINI_MODEL` | com `gemini`: chave de https://aistudio.google.com/apikey e `gemini-2.5-flash` |
    | `APP_URL` | a URL do app na Vercel, ex.: `https://agendaceneb.vercel.app` |
    | `CLASS_CREATOR_EMAILS` | e-mail(s) de quem pode criar turmas, separados por vírgula |
 
-   Sem `ANTHROPIC_API_KEY`, o app funciona normalmente, mas o "Cadastrar pela foto" mostra que a leitura está indisponível. Em produção ele **nunca** usa o modo de exemplo, que inventaria eventos.
+   **Gemini gratuito:** tem limite diário de leituras e, no plano gratuito, o Google pode usar as fotos enviadas para melhorar os produtos dele. Para dados de crianças, prefira um plano pago quando possível.
+
+   Sem a chave do provedor escolhido, o app funciona normalmente, mas o "Cadastrar pela foto" mostra que a leitura está indisponível. Em produção ele **nunca** usa o modo de exemplo, que inventaria eventos.
 5. Clique em **Deploy**. O build roda `prisma generate`, depois `prisma migrate deploy`, que cria as tabelas no Supabase, e por fim `next build`.
 
 ## 4. Primeiro acesso

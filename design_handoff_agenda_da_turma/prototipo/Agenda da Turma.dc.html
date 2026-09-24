@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-bb0cfd7c-8115-4c71-a073-f175692e8eed/styles.css">
+<script src="_ds/modernist-bb0cfd7c-8115-4c71-a073-f175692e8eed/_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--color-neutral-300)}a{color:var(--color-accent-700)}a:hover{color:var(--color-accent-800)}button{font-family:var(--font-body);color:inherit}</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:20px;padding:32px 16px 48px;font-family:var(--font-body);color:var(--color-text)">
+  <div style="width:390px;max-width:100%;display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Tela inicial — variação</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);border:2px solid var(--color-text)">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="3">
+        <button onClick="{{ v.pick }}" style="display:flex;align-items:center;gap:8px;padding:10px 10px;border:0;cursor:pointer;background:{{ v.bg }};color:{{ v.color }};font-size:13px;font-weight:600;text-align:left"><span style="font:600 11px ui-monospace,Menlo,monospace;opacity:.8">{{ v.id }}</span>{{ v.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="width:390px;height:844px;flex:none;background:#111;border-radius:54px;padding:10px;box-shadow:var(--shadow-lg)">
+    <div style="position:relative;width:100%;height:100%;border-radius:44px;overflow:hidden;background:var(--color-bg);display:flex;flex-direction:column">
+      <div style="height:48px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:6px 30px 0 34px;font-size:15px;font-weight:600">
+        <span>9:41</span>
+        <div style="position:absolute;left:50%;top:10px;transform:translateX(-50%);width:112px;height:32px;background:#111;border-radius:20px"></div>
+        <span style="display:flex;gap:6px;align-items:center;font-size:12px">5G<span style="width:24px;height:11px;border:1.5px solid var(--color-text);border-radius:3px;padding:1px;display:block"><span style="display:block;width:70%;height:100%;background:var(--color-text)"></span></span></span>
+      </div>
+
+      <sc-if value="{{ showHeader }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:none;display:flex;align-items:center;gap:12px;padding:8px 20px 12px;border-bottom:2px solid var(--color-divider)">
+          <div style="width:40px;height:40px;flex:none;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-size:20px">🌻</div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+            <span style="font-size:15px;font-weight:800;line-height:1.2">Jardim II - Vespertino</span>
+            <span style="font-size:12px;color:var(--color-neutral-700)">Escola CENEB Kids Águas Claras</span>
+          </div>
+          <div style="width:36px;height:36px;flex:none;background:var(--color-text);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px">A</div>
+          <button onClick="{{ notReady }}" aria-label="Menu" style="width:36px;height:36px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+        </div>
+      </sc-if>
+
+      <div ref="{{ scrollRef }}" style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden">
+
+        <sc-if value="{{ showHome }}" hint-placeholder-val="{{ true }}">
+
+          <sc-if value="{{ layoutA }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column">
+              <div style="padding:24px 20px 20px">
+                <div style="font-size:30px;font-weight:800;line-height:1.1;letter-spacing:-.015em">Olá, Ana 👋</div>
+                <div style="font-size:15px;color:var(--color-neutral-700);margin-top:4px">Quarta-feira, 23 de setembro</div>
+              </div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;padding:0 20px 10px;border-bottom:2px solid var(--color-text)">
+                <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Hoje</span>
+                <span style="font-size:13px;color:var(--color-neutral-700)">{{ todayCountLabel }}</span>
+              </div>
+              <sc-for list="{{ todayList }}" as="e" hint-placeholder-count="2">
+                <button onClick="{{ e.open }}" style="display:grid;grid-template-columns:48px 1fr;gap:14px;padding:16px 20px;border:0;border-bottom:2px solid var(--color-divider);background:transparent;text-align:left;cursor:pointer;width:100%" style-hover="background:var(--color-surface)">
+                  <span style="width:48px;height:48px;background:var(--color-surface);display:flex;align-items:center;justify-content:center;font-size:24px">{{ e.emoji }}</span>
+                  <span style="display:flex;flex-direction:column;gap:4px;min-width:0">
+                    <span style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--color-accent-700)">{{ e.type }} · {{ e.todayNote }}</span>
+                    <span style="font-size:18px;font-weight:800;line-height:1.2">{{ e.title }}</span>
+                    <span style="font-size:14px;color:var(--color-neutral-800);text-wrap:pretty">{{ e.summary }}</span>
+                  </span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ todayEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:28px 20px;border-bottom:2px solid var(--color-divider);font-size:17px;font-weight:600">🎉 Nenhum compromisso para hoje!</div>
+              </sc-if>
+              <button onClick="{{ openPhoto }}" style="margin:20px;display:flex;align-items:center;gap:14px;padding:18px 18px;border:0;background:var(--color-accent);color:var(--color-bg);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)" style-active="background:var(--color-accent-700)">
+                <span style="font-size:26px">📷</span>
+                <span style="flex:1;display:flex;flex-direction:column"><span style="font-size:18px;font-weight:800">Cadastrar pela foto</span><span style="font-size:13px">Fotografe a agenda. Você confere e confirma.</span></span>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+              </button>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;padding:8px 20px 10px;border-bottom:2px solid var(--color-text)">
+                <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Próximos eventos</span>
+                <button onClick="{{ goTodos }}" style="border:0;background:transparent;color:var(--color-accent-700);font-size:14px;font-weight:600;cursor:pointer;padding:4px 0">Ver todos</button>
+              </div>
+              <sc-for list="{{ upcomingShort }}" as="e" hint-placeholder-count="4">
+                <button onClick="{{ e.open }}" style="display:grid;grid-template-columns:52px 1fr 20px;align-items:center;gap:14px;padding:14px 20px;border:0;border-bottom:2px solid var(--color-divider);background:transparent;text-align:left;cursor:pointer;width:100%" style-hover="background:var(--color-surface)">
+                  <span style="display:flex;flex-direction:column;line-height:1"><span style="font-size:26px;font-weight:800">{{ e.dayNum }}</span><span style="font-size:12px;font-weight:600;letter-spacing:.06em;margin-top:3px">{{ e.mon }}</span></span>
+                  <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                    <span style="font-size:16px;font-weight:600;line-height:1.25;text-decoration:{{ e.titleDeco }}">{{ e.emoji }} {{ e.title }}</span>
+                    <span style="font-size:13px;color:{{ e.relColor }}">{{ e.rel }}{{ e.flagLine }}</span>
+                  </span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M9 6l6 6-6 6"></path></svg>
+                </button>
+              </sc-for>
+              <div style="height:24px"></div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ layoutB }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column">
+              <button onClick="{{ poster.open }}" style="display:flex;flex-direction:column;gap:6px;padding:22px 20px 22px;border:0;background:var(--color-accent);color:var(--color-bg);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)">
+                <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Próxima pendência · {{ poster.dateShort }}</span>
+                <span style="font-size:64px;font-weight:800;line-height:.95;letter-spacing:-.03em;margin-top:6px">{{ poster.bigRel }}</span>
+                <span style="font-size:22px;font-weight:800;line-height:1.15;margin-top:8px">{{ poster.emoji }} {{ poster.title }}</span>
+                <span style="font-size:15px;margin-top:4px;padding-top:10px;border-top:2px solid var(--color-bg)">Não esquecer: {{ poster.remember }}</span>
+              </button>
+              <div style="padding:20px 20px 10px;display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--color-text)">
+                <span style="font-size:22px;font-weight:800">Hoje</span>
+                <span style="font-size:13px;color:var(--color-neutral-700)">Qua, 23 set · {{ todayCountLabel }}</span>
+              </div>
+              <sc-for list="{{ todayList }}" as="e" hint-placeholder-count="2">
+                <button onClick="{{ e.open }}" style="display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border:0;border-bottom:2px solid var(--color-divider);background:transparent;text-align:left;cursor:pointer;width:100%" style-hover="background:var(--color-surface)">
+                  <span style="font-size:22px;line-height:1.2">{{ e.emoji }}</span>
+                  <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                    <span style="font-size:17px;font-weight:800;line-height:1.25">{{ e.title }}</span>
+                    <span style="font-size:14px;color:var(--color-neutral-800)">{{ e.summary }}</span>
+                  </span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ todayEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:22px 20px;border-bottom:2px solid var(--color-divider);font-size:17px;font-weight:600">🎉 Nenhum compromisso para hoje!</div>
+              </sc-if>
+              <div style="padding:24px 20px 10px;display:flex;align-items:baseline;justify-content:space-between;border-bottom:2px solid var(--color-text)">
+                <span style="font-size:22px;font-weight:800">Próximos</span>
+                <button onClick="{{ goTodos }}" style="border:0;background:transparent;color:var(--color-accent-700);font-size:14px;font-weight:600;cursor:pointer;padding:4px 0">Ver todos</button>
+              </div>
+              <sc-for list="{{ upcomingShort }}" as="e" hint-placeholder-count="4">
+                <button onClick="{{ e.open }}" style="display:grid;grid-template-columns:72px 1fr;gap:12px;padding:12px 20px;border:0;border-bottom:2px solid var(--color-divider);background:transparent;text-align:left;cursor:pointer;width:100%" style-hover="background:var(--color-surface)">
+                  <span style="font-size:13px;font-weight:800;letter-spacing:.04em;padding-top:2px">{{ e.wd }} {{ e.dayNum }}/{{ e.monNum }}</span>
+                  <span style="display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:16px;font-weight:600;text-decoration:{{ e.titleDeco }}">{{ e.emoji }} {{ e.title }}</span>
+                    <span style="font-size:13px;color:{{ e.relColor }}">{{ e.rel }}</span>
+                  </span>
+                </button>
+              </sc-for>
+              <div style="padding:20px">
+                <button onClick="{{ openPhoto }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:16px;border:2px solid var(--color-text);background:transparent;text-align:left;cursor:pointer;font-size:16px;font-weight:800" style-hover="background:var(--color-surface)">📷 Cadastrar pela foto<span style="flex:1"></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ layoutC }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column">
+              <div style="padding:20px 20px 16px;display:flex;align-items:baseline;justify-content:space-between">
+                <span style="font-size:24px;font-weight:800">Olá, Ana 👋</span>
+                <span style="font-size:13px;color:var(--color-neutral-700)">Qua, 23 set</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--color-text);border-top:2px solid var(--color-text);border-bottom:2px solid var(--color-text)">
+                <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+                  <button onClick="{{ s.go }}" style="display:flex;flex-direction:column;gap:2px;padding:14px 16px 16px;border:0;background:{{ s.bg }};color:{{ s.color }};text-align:left;cursor:pointer;min-height:104px">
+                    <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">{{ s.label }}</span>
+                    <span style="font-size:44px;font-weight:800;line-height:1;margin-top:auto">{{ s.value }}</span>
+                    <span style="font-size:13px">{{ s.sub }}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="padding:20px 20px 8px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Hoje</div>
+              <div style="display:flex;flex-direction:column;gap:2px;padding:0 20px">
+                <sc-for list="{{ todayList }}" as="e" hint-placeholder-count="2">
+                  <button onClick="{{ e.open }}" style="display:flex;flex-direction:column;gap:6px;padding:14px 16px;border:0;background:var(--color-surface);text-align:left;cursor:pointer;width:100%" style-hover="background:var(--color-neutral-300)">
+                    <span style="font-size:17px;font-weight:800">{{ e.emoji }} {{ e.title }}</span>
+                    <span style="font-size:14px;color:var(--color-neutral-800)">{{ e.summary }}</span>
+                  </button>
+                </sc-for>
+                <sc-if value="{{ todayEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:18px 16px;background:var(--color-surface);font-size:16px;font-weight:600">🎉 Nenhum compromisso para hoje!</div>
+                </sc-if>
+              </div>
+              <div style="padding:24px 20px 8px;display:flex;align-items:baseline;justify-content:space-between">
+                <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Linha do tempo</span>
+                <button onClick="{{ goTodos }}" style="border:0;background:transparent;color:var(--color-accent-700);font-size:14px;font-weight:600;cursor:pointer;padding:4px 0">Ver todos</button>
+              </div>
+              <div style="margin:0 20px;border-left:2px solid var(--color-text)">
+                <sc-for list="{{ upcomingShort }}" as="e" hint-placeholder-count="4">
+                  <button onClick="{{ e.open }}" style="display:flex;flex-direction:column;gap:2px;padding:10px 0 14px 16px;border:0;background:transparent;text-align:left;cursor:pointer;width:100%;position:relative" style-hover="background:var(--color-surface)">
+                    <span style="position:absolute;left:-7px;top:14px;width:12px;height:12px;background:{{ e.dotColor }}"></span>
+                    <span style="font-size:12px;font-weight:600;letter-spacing:.06em">{{ e.wd }} {{ e.dayNum }} {{ e.mon }} · {{ e.rel }}</span>
+                    <span style="font-size:16px;font-weight:600;text-decoration:{{ e.titleDeco }}">{{ e.emoji }} {{ e.title }}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="padding:20px">
+                <button onClick="{{ openPhoto }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:16px;border:0;background:var(--color-accent);color:var(--color-bg);text-align:left;cursor:pointer;font-size:16px;font-weight:800" style-hover="background:var(--color-accent-600)">📷 Cadastrar pela foto<span style="flex:1"></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+              </div>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <sc-if value="{{ showAgenda }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column">
+            <div style="padding:20px 20px 12px;font-size:30px;font-weight:800;letter-spacing:-.015em">Agenda</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);margin:0 20px;border:2px solid var(--color-text)">
+              <sc-for list="{{ segs }}" as="s" hint-placeholder-count="4">
+                <button onClick="{{ s.pick }}" style="height:44px;border:0;padding:0 8px;text-align:left;font-size:14px;font-weight:600;cursor:pointer;background:{{ s.bg }};color:{{ s.color }}">{{ s.label }}</button>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ vSemana }}" hint-placeholder-val="{{ true }}">
+              <div style="margin-top:16px;border-top:2px solid var(--color-text)">
+                <sc-for list="{{ week }}" as="w" hint-placeholder-count="7">
+                  <div style="display:grid;grid-template-columns:72px 1fr;border-bottom:2px solid var(--color-divider)">
+                    <div style="padding:12px 0 12px 20px;display:flex;flex-direction:column;line-height:1;color:{{ w.numColor }}">
+                      <span style="font-size:12px;font-weight:600;letter-spacing:.06em">{{ w.wd }}</span>
+                      <span style="font-size:28px;font-weight:800;margin-top:4px">{{ w.num }}</span>
+                      <span style="font-size:12px;font-weight:600;margin-top:4px">{{ w.tag }}</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;justify-content:center;padding:6px 20px 6px 0">
+                      <sc-for list="{{ w.events }}" as="e" hint-placeholder-count="1">
+                        <button onClick="{{ e.open }}" style="display:flex;flex-direction:column;gap:1px;padding:8px 0;border:0;background:transparent;text-align:left;cursor:pointer;width:100%">
+                          <span style="font-size:16px;font-weight:600;text-decoration:{{ e.titleDeco }}">{{ e.emoji }} {{ e.title }}</span>
+                          <span style="font-size:13px;color:var(--color-neutral-700)">{{ e.metaLine }}</span>
+                        </button>
+                      </sc-for>
+                      <sc-if value="{{ w.empty }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size:14px;color:var(--color-neutral-700);padding:8px 0">Nenhum evento</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ vMes }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:16px 20px 0">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                  <span style="font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.02em">{{ monthTitle }}</span>
+                  <div style="display:flex;gap:4px">
+                    <button onClick="{{ prevMonth }}" aria-label="Mês anterior" style="width:44px;height:44px;border:2px solid var(--color-text);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" style-hover="background:var(--color-surface)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M15 6l-6 6 6 6"></path></svg></button>
+                    <button onClick="{{ nextMonth }}" aria-label="Próximo mês" style="width:44px;height:44px;border:2px solid var(--color-text);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0" style-hover="background:var(--color-surface)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M9 6l6 6-6 6"></path></svg></button>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);padding-bottom:6px">
+                  <sc-for list="{{ wdHead }}" as="h" hint-placeholder-count="7"><span style="font-size:12px;font-weight:600;letter-spacing:.04em;padding-left:4px">{{ h }}</span></sc-for>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;background:var(--color-divider);border:2px solid var(--color-divider)">
+                  <sc-for list="{{ monthCells }}" as="c" hint-placeholder-count="35">
+                    <button onClick="{{ c.pick }}" style="height:52px;border:0;padding:4px 4px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;text-align:left;cursor:pointer;background:{{ c.bg }};color:{{ c.color }}">
+                      <span style="font-size:14px;font-weight:{{ c.weight }}">{{ c.num }}</span>
+                      <span style="font-size:13px;line-height:1;letter-spacing:-1px">{{ c.emojis }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="padding:20px 20px 10px;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--color-text);margin:0 0 0">{{ selDayLabel }}</div>
+              <sc-for list="{{ selDayEvents }}" as="e" hint-placeholder-count="1">
+                <button onClick="{{ e.open }}" style="display:flex;gap:12px;align-items:center;padding:14px 20px;border:0;border-bottom:2px solid var(--color-divider);background:transparent;text-align:left;cursor:pointer;width:100%" style-hover="background:var(--color-surface)">
+                  <span style="width:40px;height:40px;flex:none;background:var(--color-surface);display:flex;align-items:center;justify-content:center;font-size:20px">{{ e.emoji }}</span>
+                  <span style="display:flex;flex-direction:column;gap:1px"><span style="font-size:16px;font-weight:600;text-decoration:{{ e.titleDeco }}">{{ e.title }}</span><span style="font-size:13px;color:var(--color-neutral-700)">{{ e.metaLine }}</span></span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ selDayEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:16px 20px;font-size:14px;color:var(--color-neutral-700)">Nenhum evento neste dia.</div>
+              </sc-if>
+            </sc-if>
+
+            <sc-if value="{{ vLista }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:12px 20px 0;font-size:13px;color:var(--color-neutral-700)">{{ listCaption }}</div>
+              <div style="margin-top:8px">
+                <sc-for list="{{ groups }}" as="g" hint-placeholder-count="5">
+                  <div style="display:grid;grid-template-columns:72px 1fr;border-top:2px solid var(--color-text)">
+                    <div style="padding:14px 0 14px 20px;display:flex;flex-direction:column;line-height:1">
+                      <span style="font-size:30px;font-weight:800">{{ g.dayNum }}</span>
+                      <span style="font-size:12px;font-weight:600;letter-spacing:.06em;margin-top:4px">{{ g.mon }} · {{ g.wd }}</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;padding:4px 20px 4px 0">
+                      <span style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:{{ g.relColor }};padding-top:12px">{{ g.rel }}</span>
+                      <sc-for list="{{ g.events }}" as="e" hint-placeholder-count="1">
+                        <button onClick="{{ e.open }}" style="display:flex;flex-direction:column;gap:6px;padding:6px 0 12px;border:0;background:transparent;text-align:left;cursor:pointer;width:100%">
+                          <span style="font-size:17px;font-weight:800;line-height:1.25;text-decoration:{{ e.titleDeco }}">{{ e.emoji }} {{ e.title }}</span>
+                          <span style="display:flex;flex-wrap:wrap;gap:4px">
+                            <sc-for list="{{ e.flags }}" as="f" hint-placeholder-count="0"><span style="font-size:12px;font-weight:600;padding:2px 6px;background:{{ f.bg }};color:{{ f.color }}">{{ f.t }}</span></sc-for>
+                          </span>
+                        </button>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ groupsEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:20px;border-top:2px solid var(--color-text);font-size:15px">Você ainda não cadastrou eventos.</div>
+                </sc-if>
+                <div style="border-top:2px solid var(--color-text);height:24px"></div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showDetail }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 12px 8px 8px;border-bottom:2px solid var(--color-divider)">
+              <button onClick="{{ back }}" style="height:44px;display:flex;align-items:center;gap:4px;border:0;background:transparent;cursor:pointer;font-size:16px;font-weight:600;padding:0 8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M15 6l-6 6 6 6"></path></svg>Voltar</button>
+              <button onClick="{{ share }}" aria-label="Compartilhar" style="width:44px;height:44px;border:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path></svg></button>
+            </div>
+            <div style="padding:20px 20px 16px;display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--color-accent-700)">{{ ev.emoji }} {{ ev.type }}</span>
+              <span style="font-size:30px;font-weight:800;line-height:1.1;letter-spacing:-.015em;text-wrap:pretty;text-decoration:{{ ev.titleDeco }}">{{ ev.title }}</span>
+              <sc-if value="{{ ev.canceled }}" hint-placeholder-val="{{ false }}">
+                <span style="align-self:flex-start;font-size:13px;font-weight:800;padding:4px 8px;background:var(--color-text);color:var(--color-bg);letter-spacing:.06em">❌ CANCELADO</span>
+              </sc-if>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--color-divider);border-top:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider)">
+              <sc-for list="{{ ev.facts }}" as="f" hint-placeholder-count="4">
+                <div style="background:var(--color-bg);padding:12px 20px 14px;display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">{{ f.icon }} {{ f.label }}</span>
+                  <span style="font-size:18px;font-weight:800;color:{{ f.color }}">{{ f.value }}</span>
+                  <span style="font-size:13px;color:var(--color-neutral-700)">{{ f.sub }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ ev.hasAlerts }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-wrap:wrap;gap:6px;padding:16px 20px 0">
+                <sc-for list="{{ ev.alerts }}" as="a" hint-placeholder-count="2"><span style="font-size:13px;font-weight:600;padding:5px 8px;background:var(--color-accent-100);color:var(--color-accent-800)">{{ a }}</span></sc-for>
+              </div>
+            </sc-if>
+            <div style="padding:20px 20px 0;display:flex;flex-direction:column;gap:4px">
+              <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Descrição</span>
+              <span style="font-size:16px;text-wrap:pretty">{{ ev.desc }}</span>
+            </div>
+            <sc-if value="{{ ev.hasMats }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:20px 20px 0;display:flex;flex-direction:column">
+                <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding-bottom:8px;border-bottom:2px solid var(--color-text)">Necessário levar</span>
+                <sc-for list="{{ ev.mats }}" as="m" hint-placeholder-count="2">
+                  <button onClick="{{ m.toggle }}" style="display:flex;align-items:center;gap:12px;min-height:48px;padding:8px 0;border:0;border-bottom:2px solid var(--color-divider);background:transparent;text-align:left;cursor:pointer;width:100%">
+                    <span style="width:24px;height:24px;flex:none;border:2px solid var(--color-text);background:{{ m.boxBg }};color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800">{{ m.mark }}</span>
+                    <span style="font-size:16px;text-decoration:{{ m.deco }};color:{{ m.color }}">{{ m.text }}</span>
+                  </button>
+                </sc-for>
+                <span style="font-size:12px;color:var(--color-neutral-700);padding-top:6px">Marque o que já separou. Só você vê.</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ ev.hasObs }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:20px 20px 0;display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase">Observações</span>
+                <span style="font-size:16px;text-wrap:pretty">{{ ev.obs }}</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ ev.fromPhoto }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ openOriginal }}" style="margin:20px 20px 0;display:flex;align-items:center;gap:12px;padding:10px;border:2px solid var(--color-text);background:transparent;text-align:left;cursor:pointer" style-hover="background:var(--color-surface)">
+                <span style="width:52px;height:52px;flex:none;background:repeating-linear-gradient(135deg,var(--color-neutral-300) 0 6px,var(--color-neutral-200) 6px 12px);display:flex;align-items:center;justify-content:center;font-size:20px">📷</span>
+                <span style="flex:1;display:flex;flex-direction:column"><span style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase">Origem: foto da agenda</span><span style="font-size:15px;font-weight:800">Ver foto original</span></span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M9 6l6 6-6 6"></path></svg>
+              </button>
+            </sc-if>
+            <div style="margin:20px 20px 0;padding-top:12px;border-top:2px solid var(--color-divider);display:flex;flex-direction:column;gap:2px;font-size:14px">
+              <span><strong>Cadastrado por:</strong> {{ ev.by }}</span>
+              <span><strong>Cadastrado em:</strong> {{ ev.created }}</span>
+              <sc-if value="{{ ev.hasHistory }}" hint-placeholder-val="{{ false }}"><span style="color:var(--color-neutral-700);margin-top:4px">{{ ev.history }}</span></sc-if>
+            </div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:8px">
+              <button onClick="{{ share }}" style="height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;border:0;background:var(--color-accent);color:var(--color-bg);font-size:16px;font-weight:800;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-600)" style-active="background:var(--color-accent-700)">Compartilhar com a família<span style="flex:1"></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <button onClick="{{ notReady }}" style="height:48px;padding:0 16px;border:2px solid var(--color-text);background:transparent;font-size:15px;font-weight:800;cursor:pointer;text-align:left" style-hover="background:var(--color-surface)">Editar</button>
+                <button onClick="{{ askDelete }}" style="height:48px;padding:0 16px;border:2px solid var(--color-accent-700);background:transparent;color:var(--color-accent-700);font-size:15px;font-weight:800;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-100)">Excluir</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="flex:none;height:84px;display:grid;grid-template-columns:repeat(5,1fr);align-items:start;padding-top:6px;border-top:2px solid var(--color-text);background:var(--color-bg)">
+        <button onClick="{{ goHome }}" style="height:52px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:{{ tabHomeColor }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M3 10l9-7 9 7v11H3z"></path><path d="M9 21v-7h6v7"></path></svg><span style="font-size:12px;font-weight:600">Hoje</span></button>
+        <button onClick="{{ goAgenda }}" style="height:52px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:{{ tabAgendaColor }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><rect x="3" y="5" width="18" height="16"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span style="font-size:12px;font-weight:600">Agenda</span></button>
+        <button onClick="{{ openAdd }}" aria-label="Adicionar" style="height:52px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><span style="width:52px;height:52px;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"><path d="M12 5v14M5 12h14"></path></svg></span></button>
+        <button onClick="{{ notReady }}" style="height:52px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--color-neutral-700)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M6 16V10a6 6 0 0112 0v6l2 2H4z"></path><path d="M10 21h4"></path></svg><span style="font-size:12px;font-weight:600">Alertas</span></button>
+        <button onClick="{{ notReady }}" style="height:52px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--color-neutral-700)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1-4 4-6 8-6s7 2 8 6"></path></svg><span style="font-size:12px;font-weight:600">Perfil</span></button>
+      </div>
+
+      <sc-if value="{{ addOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ closeOverlays }}" style="position:absolute;inset:0;background:color-mix(in srgb,var(--color-text) 45%,transparent);display:flex;align-items:flex-end">
+          <div onClick="{{ stop }}" style="width:100%;background:var(--color-bg);border-top:2px solid var(--color-text);padding:20px 20px 36px;display:flex;flex-direction:column;gap:10px">
+            <span style="font-size:22px;font-weight:800">Adicionar evento</span>
+            <button onClick="{{ openPhoto }}" style="display:flex;align-items:center;gap:12px;padding:16px;border:0;background:var(--color-accent);color:var(--color-bg);text-align:left;cursor:pointer" style-hover="background:var(--color-accent-600)"><span style="font-size:24px">📷</span><span style="display:flex;flex-direction:column"><span style="font-size:17px;font-weight:800">Cadastrar pela foto</span><span style="font-size:13px">Mais rápido: a IA preenche para você</span></span></button>
+            <button onClick="{{ notReady }}" style="display:flex;align-items:center;gap:12px;padding:16px;border:2px solid var(--color-text);background:transparent;text-align:left;cursor:pointer" style-hover="background:var(--color-surface)"><span style="font-size:24px">✏️</span><span style="font-size:17px;font-weight:800">Preencher manualmente</span></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ delOpen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ closeOverlays }}" style="position:absolute;inset:0;background:color-mix(in srgb,var(--color-text) 45%,transparent);display:flex;align-items:center;padding:24px">
+          <div onClick="{{ stop }}" style="width:100%;background:var(--color-bg);box-shadow:var(--shadow-lg);padding:22px;display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:20px;font-weight:800">Tem certeza que deseja excluir este evento?</span>
+            <span style="font-size:15px;color:var(--color-neutral-800)">“{{ ev.title }}” deixará de aparecer para toda a turma.</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">
+              <button onClick="{{ closeOverlays }}" style="height:48px;padding:0 14px;border:2px solid var(--color-text);background:transparent;font-size:15px;font-weight:800;cursor:pointer;text-align:left">Cancelar</button>
+              <button onClick="{{ confirmDelete }}" style="height:48px;padding:0 14px;border:0;background:var(--color-accent-700);color:var(--color-bg);font-size:15px;font-weight:800;cursor:pointer;text-align:left" style-hover="background:var(--color-accent-800)">Excluir</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ origOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;background:var(--color-text);color:var(--color-bg);display:flex;flex-direction:column;padding:56px 20px 32px;gap:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Foto original · {{ ev.created }}</span>
+            <button onClick="{{ closeOverlays }}" style="height:44px;padding:0 12px;border:2px solid var(--color-bg);background:transparent;color:var(--color-bg);font-size:14px;font-weight:800;cursor:pointer">Fechar</button>
+          </div>
+          <div style="flex:1;background:repeating-linear-gradient(135deg,var(--color-neutral-800) 0 10px,var(--color-neutral-900) 10px 20px);display:flex;align-items:flex-end;padding:12px;font:12px ui-monospace,Menlo,monospace;color:var(--color-neutral-300)">foto da agenda (imagem enviada por {{ ev.by }})</div>
+          <div style="display:flex;flex-direction:column;gap:4px;border-top:2px solid var(--color-neutral-600);padding-top:12px">
+            <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-400)">Texto lido na foto</span>
+            <span style="font-size:16px;text-wrap:pretty">“{{ ev.transcript }}”</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:16px;right:16px;bottom:100px;background:var(--color-text);color:var(--color-bg);padding:14px 16px;font-size:15px;font-weight:600;box-shadow:var(--shadow-md)">{{ toast }}</div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;homeLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;lista&quot;,&quot;poster&quot;,&quot;grade&quot;],&quot;default&quot;:&quot;lista&quot;,&quot;tsType&quot;:&quot;'lista'|'poster'|'grade'&quot;},&quot;emptyToday&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const TODAY = new Date(2026, 8, 23);
+const WD = ['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+const WDF = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+const MON = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+const MONF = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const P = n => String(n).padStart(2, '0');
+const toD = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const key = dt => dt.getFullYear() + '-' + P(dt.getMonth() + 1) + '-' + P(dt.getDate());
+const diff = s => Math.round((toD(s) - TODAY) / 864e5);
+const rel = n => n === 0 ? 'Hoje' : n === 1 ? 'Amanhã' : n === -1 ? 'Ontem' : n > 0 ? 'Em ' + n + ' dias' : 'Há ' + (-n) + ' dias';
+const money = v => 'R$ ' + v.toFixed(2).replace('.', ',');
+
+const EVENTS = [
+  { id: 'artes', emoji: '🎨', type: 'Atividade', title: 'Atividade de Artes', date: '2026-09-23', place: 'Sala de artes', desc: 'Aula de colagem com a professora Júlia.', materials: ['Lápis de cor', 'Cola', 'Tesoura sem ponta'], by: 'Carla', created: '18/09/2026', source: 'foto', transcript: 'Quarta-feira, dia 23, aula de artes. Enviar lápis de cor, cola e tesoura sem ponta.' },
+  { id: 'mat', emoji: '📚', type: 'Tarefa', title: 'Tarefa de Matemática', date: '2026-09-23', desc: 'Página 35 e 36 do livro.', todayNote: 'Entrega hoje', by: 'Ana', mine: true, created: '21/09/2026', source: 'foto', transcript: 'Tarefa: páginas 35 e 36 do livro de matemática. Entregar quarta.' },
+  { id: 'maria', emoji: '🎂', type: 'Aniversário', title: 'Aniversário da Maria', date: '2026-09-25', time: '15:00', place: 'Pátio', desc: 'Comemoração no fim da aula. A família da Maria levará o bolo.', by: 'Juliana', created: '20/09/2026', source: 'manual' },
+  { id: 'reuniao', emoji: '👩‍🏫', type: 'Reunião', title: 'Reunião de pais', date: '2026-09-29', time: '19:00', place: 'Auditório', desc: 'Apresentação do projeto do 4º bimestre.', by: 'Carla', created: '19/09/2026', source: 'foto', transcript: 'Dia 29/09 às 19h reunião de pais no auditório.' },
+  { id: 'pintura', emoji: '🎨', type: 'Atividade', title: 'Atividade de pintura', date: '2026-09-30', desc: 'Pintura com guache.', materials: ['Camiseta velha'], obs: 'A professora escreveu “próxima quarta-feira”; a data foi confirmada como 30/09.', by: 'Ana', mine: true, created: '23/09/2026', source: 'foto', transcript: 'Na próxima quarta-feira teremos atividade de pintura. Mandar camiseta velha.' },
+  { id: 'musica', emoji: '🏫', type: 'Evento escolar', title: 'Apresentação de música', date: '2026-10-01', time: '10:00', place: 'Quadra', desc: 'Apresentação do coral das turmas do 1º ano.', status: 'cancelado', by: 'Carla', created: '15/09/2026', source: 'manual', history: 'Carla cancelou o evento em 22/09/2026 às 08:15.' },
+  { id: 'zoo', emoji: '🚌', type: 'Passeio', title: 'Passeio ao Zoológico', date: '2026-10-08', time: '08:00', place: 'Zoológico', amount: 35, auth: true, desc: 'Passeio ao zoológico.', materials: ['Autorização assinada'], obs: 'Saída às 8h.', by: 'Ana', mine: true, created: '23/09/2026', source: 'foto', history: 'Maria alterou o horário em 23/09/2026 às 19:32.', transcript: 'Dia 08/10 passeio ao zoológico. As crianças deverão trazer autorização assinada e R$ 35,00. Saída às 8h.' },
+  { id: 'feira', emoji: '🏫', type: 'Evento escolar', title: 'Feira Cultural', date: '2026-10-10', time: '09:00', place: 'Quadra da escola', desc: 'Apresentação dos trabalhos das turmas. Famílias convidadas.', by: 'Juliana', created: '22/09/2026', source: 'manual' },
+  { id: 'prova', emoji: '📝', type: 'Prova', title: 'Prova de Matemática', date: '2026-10-15', desc: 'Conteúdo: adição e subtração (páginas 20 a 36).', by: 'Carla', created: '22/09/2026', source: 'foto', transcript: '15/10 prova de matemática. Estudar páginas 20 a 36.' },
+  { id: 'festa', emoji: '🎉', type: 'Festa', title: 'Festa das Crianças', date: '2026-10-20', time: '13:30', amount: 15, desc: 'Lanche coletivo e brincadeiras.', materials: ['Um prato de salgado ou doce'], by: 'Juliana', created: '22/09/2026', source: 'manual' }
+];
+
+class Component extends DCLogic {
+  state = { tab: 'home', view: 'semana', detail: null, layout: null, monthOff: 0, selDay: '2026-09-23', checked: {}, deleted: {}, addOpen: false, delOpen: false, origOpen: false, toast: '' };
+  scrollRef = React.createRef();
+
+  componentDidUpdate(pp, ps) {
+    const k = s => s.tab + s.view + s.detail;
+    if (k(ps) !== k(this.state) && this.scrollRef.current) this.scrollRef.current.scrollTop = 0;
+  }
+  flash(t) { clearTimeout(this._t); this.setState({ toast: t }); this._t = setTimeout(() => this.setState({ toast: '' }), 2200); }
+  open(id) { this.setState({ detail: id, prevTab: this.state.tab }); }
+
+  vm(e) {
+    const n = diff(e.date), dt = toD(e.date), canceled = e.status === 'cancelado';
+    const mats = e.materials || [];
+    const flags = [];
+    if (canceled) flags.push({ t: '❌ Cancelado', bg: 'var(--color-text)', color: 'var(--color-bg)' });
+    else {
+      if (e.amount) flags.push({ t: '💰 ' + money(e.amount) });
+      if (e.auth) flags.push({ t: '📄 Autorização' });
+      if (mats.some(m => !/autoriza/i.test(m))) flags.push({ t: '🎒 Material' });
+      if (e.time) flags.push({ t: '⏰ ' + e.time });
+      flags.forEach(f => { f.bg = 'var(--color-accent-100)'; f.color = 'var(--color-accent-800)'; });
+    }
+    const flagTxt = canceled ? [] : [e.amount && money(e.amount), e.auth && 'autorização', mats.some(m => !/autoriza/i.test(m)) && 'material'].filter(Boolean);
+    return {
+      ...e, canceled, n,
+      dayNum: P(dt.getDate()), monNum: P(dt.getMonth() + 1), mon: MON[dt.getMonth()], wd: WD[dt.getDay()],
+      dateShort: P(dt.getDate()) + '/' + P(dt.getMonth() + 1),
+      rel: canceled ? 'Cancelado' : rel(n),
+      relColor: canceled ? 'var(--color-neutral-700)' : n <= 7 ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
+      dotColor: canceled ? 'var(--color-neutral-500)' : flagTxt.length ? 'var(--color-accent)' : 'var(--color-text)',
+      flagLine: flagTxt.length ? ' · ' + flagTxt.join(' · ') : '',
+      metaLine: canceled ? 'Cancelado' : [e.time, e.place].filter(Boolean).join(' · ') || e.type,
+      titleDeco: canceled ? 'line-through' : 'none',
+      todayNote: e.todayNote || (e.time ? 'Às ' + e.time : 'Hoje'),
+      summary: mats.length ? 'Levar: ' + mats.join(', ') : e.desc,
+      flags, open: () => this.open(e.id)
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const layout = s.layout || this.props.homeLayout || 'lista';
+    const emptyToday = !!this.props.emptyToday;
+    const all = EVENTS.filter(e => !s.deleted[e.id] && !(emptyToday && e.date === key(TODAY))).map(e => this.vm(e)).sort((a, b) => a.date.localeCompare(b.date));
+    const todayList = all.filter(e => e.n === 0);
+    const future = all.filter(e => e.n > 0);
+    const active = future.filter(e => !e.canceled);
+    const posterE = active.find(e => e.flagLine) || active[0];
+    const poster = posterE ? { ...posterE, bigRel: posterE.n === 1 ? 'Amanhã' : posterE.n + ' dias', remember: [...(posterE.materials || []), posterE.amount && money(posterE.amount)].filter(Boolean).join(' · ') } : {};
+
+    const variants = [['1a', 'Lista', 'lista'], ['1b', 'Pôster', 'poster'], ['1c', 'Grade', 'grade']].map(([id, label, v]) => ({ id, label, bg: layout === v ? 'var(--color-text)' : 'var(--color-bg)', color: layout === v ? 'var(--color-bg)' : 'var(--color-text)', pick: () => this.setState({ layout: v, tab: 'home', detail: null }) }));
+
+    const weekAll = all.filter(e => e.n >= 0 && e.n <= 6 && !e.canceled);
+    const stats = [
+      { label: 'Hoje', value: todayList.length, sub: todayList.length === 1 ? 'evento' : 'eventos', go: () => this.setState({ tab: 'agenda', view: 'semana', detail: null }) },
+      { label: 'Esta semana', value: weekAll.length, sub: 'próximos 7 dias', go: () => this.setState({ tab: 'agenda', view: 'semana', detail: null }) },
+      { label: 'Pagamentos', value: active.filter(e => e.amount).length, sub: money(active.reduce((t, e) => t + (e.amount || 0), 0)) + ' no total', go: () => this.setState({ tab: 'agenda', view: 'todos', detail: null }) },
+      { label: 'Com material', value: active.filter(e => (e.materials || []).length).length, sub: 'itens para separar', go: () => this.setState({ tab: 'agenda', view: 'todos', detail: null }) }
+    ].map((x, i) => ({ ...x, bg: i === 0 ? 'var(--color-accent)' : 'var(--color-bg)', color: i === 0 ? 'var(--color-bg)' : 'var(--color-text)' }));
+
+    const week = [];
+    for (let i = 0; i < 7; i++) {
+      const dt = new Date(TODAY); dt.setDate(dt.getDate() + i);
+      const evs = all.filter(e => e.date === key(dt));
+      week.push({ wd: WD[dt.getDay()], num: dt.getDate(), tag: i === 0 ? 'HOJE' : '', numColor: i === 0 ? 'var(--color-accent-700)' : 'var(--color-text)', events: evs, empty: !evs.length });
+    }
+
+    const mDate = new Date(2026, 8 + s.monthOff, 1);
+    const lead = (mDate.getDay() + 6) % 7;
+    const days = new Date(mDate.getFullYear(), mDate.getMonth() + 1, 0).getDate();
+    const monthCells = [];
+    for (let i = 0; i < lead; i++) monthCells.push({ num: '', emojis: '', bg: 'var(--color-bg)', color: 'var(--color-text)', weight: 400, pick: () => {} });
+    for (let d = 1; d <= days; d++) {
+      const k = key(new Date(mDate.getFullYear(), mDate.getMonth(), d));
+      const evs = all.filter(e => e.date === k);
+      const sel = k === s.selDay, isToday = k === key(TODAY);
+      monthCells.push({ num: d, emojis: evs.slice(0, 3).map(e => e.canceled ? '✕' : e.emoji).join(''), weight: isToday || sel ? 800 : 400, bg: sel ? 'var(--color-text)' : 'var(--color-bg)', color: sel ? 'var(--color-bg)' : isToday ? 'var(--color-accent-700)' : 'var(--color-text)', pick: () => this.setState({ selDay: k }) });
+    }
+    while (monthCells.length % 7) monthCells.push({ num: '', emojis: '', bg: 'var(--color-bg)', color: 'var(--color-text)', weight: 400, pick: () => {} });
+    const sd = toD(s.selDay);
+    const selDayEvents = all.filter(e => e.date === s.selDay);
+
+    const listSrc = s.view === 'meus' ? all.filter(e => e.mine) : all.filter(e => e.n >= 0);
+    const groups = [];
+    listSrc.forEach(e => {
+      let g = groups[groups.length - 1];
+      if (!g || g.date !== e.date) { g = { date: e.date, dayNum: e.dayNum, mon: e.mon, wd: e.wd, rel: rel(e.n), relColor: e.n <= 7 && e.n >= 0 ? 'var(--color-accent-700)' : 'var(--color-neutral-700)', events: [] }; groups.push(g); }
+      g.events.push(e);
+    });
+
+    const segs = [['semana', 'Semana'], ['mes', 'Mês'], ['todos', 'Todos'], ['meus', 'Meus']].map(([v, label]) => ({ label, bg: s.view === v ? 'var(--color-text)' : 'transparent', color: s.view === v ? 'var(--color-bg)' : 'var(--color-text)', pick: () => this.setState({ view: v }) }));
+
+    const raw = EVENTS.find(e => e.id === s.detail);
+    let ev = {};
+    if (raw) {
+      const v = this.vm(raw), dt = toD(raw.date);
+      const miss = 'Não informado';
+      ev = {
+        ...v,
+        facts: [
+          { icon: '📅', label: 'Data', value: v.dateShort + '/' + dt.getFullYear(), sub: WDF[dt.getDay()] + ' · ' + rel(v.n).toLowerCase() },
+          { icon: '⏰', label: 'Horário', value: raw.time || miss, sub: '' },
+          { icon: '📍', label: 'Local', value: raw.place || miss, sub: '' },
+          { icon: '💰', label: 'Valor', value: raw.amount ? money(raw.amount) : miss, sub: '' }
+        ].map(f => ({ ...f, color: f.value === miss ? 'var(--color-neutral-600)' : 'var(--color-text)' })),
+        alerts: v.canceled ? [] : [raw.amount && '💰 Pagamento necessário', raw.auth && '📄 Autorização necessária', (raw.materials || []).some(m => !/autoriza/i.test(m)) && '🎒 Material necessário'].filter(Boolean),
+        hasMats: !!(raw.materials || []).length,
+        mats: (raw.materials || []).map((m, i) => {
+          const k = raw.id + ':' + i, c = !!s.checked[k];
+          return { text: m, mark: c ? '✓' : '', boxBg: c ? 'var(--color-text)' : 'transparent', deco: c ? 'line-through' : 'none', color: c ? 'var(--color-neutral-700)' : 'var(--color-text)', toggle: () => this.setState(st => ({ checked: { ...st.checked, [k]: !st.checked[k] } })) };
+        }),
+        hasObs: !!raw.obs, fromPhoto: raw.source === 'foto', hasHistory: !!raw.history
+      };
+      ev.hasAlerts = ev.alerts.length > 0;
+    }
+
+    const showDetail = !!raw;
+    const tab = s.tab;
+    const shareText = raw ? [raw.emoji + ' ' + raw.title, '', '📅 ' + ev.dateShort + (raw.time ? '\n⏰ ' + raw.time : '') + (raw.amount ? '\n💰 ' + money(raw.amount) : ''), (raw.materials || []).length ? '\nNão esquecer: ' + raw.materials.join(', ') + '.' : ''].join('\n') : '';
+
+    return {
+      variants, layoutA: layout === 'lista', layoutB: layout === 'poster', layoutC: layout === 'grade',
+      showHeader: !showDetail, showHome: !showDetail && tab === 'home', showAgenda: !showDetail && tab === 'agenda', showDetail,
+      todayList, todayEmpty: !todayList.length, todayCountLabel: todayList.length ? todayList.length + (todayList.length === 1 ? ' compromisso' : ' compromissos') : 'Livre',
+      upcomingShort: future.slice(0, 5), poster, stats,
+      segs, vSemana: s.view === 'semana', vMes: s.view === 'mes', vLista: s.view === 'todos' || s.view === 'meus',
+      listCaption: s.view === 'meus' ? 'Eventos que você cadastrou' : 'Próximos eventos, em ordem de data',
+      week, wdHead: ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB', 'DOM'], monthCells,
+      monthTitle: MONF[mDate.getMonth()] + ' ' + mDate.getFullYear(),
+      selDayLabel: WDF[sd.getDay()] + ', ' + sd.getDate() + ' de ' + MONF[sd.getMonth()],
+      selDayEvents, selDayEmpty: !selDayEvents.length,
+      groups, groupsEmpty: !groups.length,
+      ev, scrollRef: this.scrollRef,
+      tabHomeColor: tab === 'home' && !showDetail ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
+      tabAgendaColor: tab === 'agenda' && !showDetail ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
+      addOpen: s.addOpen, delOpen: s.delOpen, origOpen: s.origOpen, hasToast: !!s.toast, toast: s.toast,
+      goHome: () => this.setState({ tab: 'home', detail: null }),
+      goAgenda: () => this.setState({ tab: 'agenda', detail: null }),
+      goTodos: () => this.setState({ tab: 'agenda', view: 'todos', detail: null }),
+      back: () => this.setState({ detail: null }),
+      prevMonth: () => this.setState(st => ({ monthOff: st.monthOff - 1 })),
+      nextMonth: () => this.setState(st => ({ monthOff: st.monthOff + 1 })),
+      openAdd: () => this.setState({ addOpen: true }),
+      openPhoto: () => { this.setState({ addOpen: false }); this.flash('Cadastro pela foto: próxima etapa do protótipo.'); },
+      notReady: () => { this.setState({ addOpen: false }); this.flash('Esta tela ainda não faz parte do protótipo.'); },
+      askDelete: () => this.setState({ delOpen: true }),
+      confirmDelete: () => { this.setState(st => ({ deleted: { ...st.deleted, [st.detail]: true }, detail: null, delOpen: false })); this.flash('Evento excluído.'); },
+      openOriginal: () => this.setState({ origOpen: true }),
+      closeOverlays: () => this.setState({ addOpen: false, delOpen: false, origOpen: false }),
+      stop: e => e.stopPropagation(),
+      share: async () => {
+        try { if (navigator.share) { await navigator.share({ text: shareText }); return; } } catch (e) { return; }
+        try { await navigator.clipboard.writeText(shareText); this.flash('Texto copiado. Cole no WhatsApp.'); } catch (e) { this.flash('Não foi possível compartilhar.'); }
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

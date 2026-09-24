@@ -1,0 +1,4 @@
+﻿# Exports do Claude Design (o conteúdo já está em design_handoff_agenda_da_turma/)
+*.zip
+.DS_Store
+Thumbs.db

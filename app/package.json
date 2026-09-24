@@ -1,0 +1,48 @@
+{
+  "name": "agenda-da-turma",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run db:local && next dev",
+    "build": "npm run db:local && next build",
+    "start": "next start",
+    "vercel-build": "prisma generate && prisma migrate deploy && next build",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run db:local && vitest run",
+    "setup": "npm run db:local && prisma db push --schema prisma/sqlite/schema.prisma && tsx prisma/seed.ts && node scripts/gen-icons.mjs",
+    "db:local": "node scripts/sqlite-schema.mjs && prisma generate --schema prisma/sqlite/schema.prisma",
+    "db:push": "npm run db:local && prisma db push --schema prisma/sqlite/schema.prisma",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:migration": "node scripts/new-migration.mjs",
+    "icons": "node scripts/gen-icons.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3",
+    "next": "^16.3.6",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.20.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.1"
+  },
+  "allowScripts": {
+    "prisma@6.19.3": true,
+    "@prisma/engines@6.19.3": true,
+    "@prisma/client@6.19.3": true,
+    "esbuild@0.28.2": true
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

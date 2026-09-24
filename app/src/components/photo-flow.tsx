@@ -129,7 +129,7 @@ export function PhotoFlow() {
             {phase === "pick" && <p className="mt-2 text-[15px] text-neutral-700">A IA lê o que a professora escreveu e monta a prévia. Nada é cadastrado sem você conferir e confirmar.</p>}
             {phase === "error" && (
               <p className="mt-2 text-[15px] text-neutral-700">{failCode === "ia_indisponivel"
-                  ? "A foto ficou guardada. Preencha os dados manualmente e ela será anexada ao evento."
+                  ? `${failMsg} A foto ficou guardada: se preencher manualmente, ela será anexada ao evento.`
                   : failMsg || "Tente outra foto com boa luz e a página inteira enquadrada, ou preencha os dados você mesmo."}</p>
             )}
           </div>

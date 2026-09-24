@@ -50,14 +50,17 @@ export class GeminiAgendaAI implements AgendaAIService {
       r = await this.call(image, ctx, true);
       // Se o modelo não aceitar o schema, tenta de novo pedindo só JSON; o zod valida depois.
       if (r.status === 400 && /schema/i.test(r.body.error?.message ?? "")) r = await this.call(image, ctx, false);
-    } catch {
+    } catch (err) {
+      console.error("[ia] Falha de rede ao chamar o Gemini:", err);
       throw new AIUnavailableError("Não foi possível falar com a IA agora. Tente novamente em instantes.");
     }
 
+    if (r.status !== 200) console.error(`[ia] Gemini respondeu ${r.status} (modelo ${this.model}):`, r.body.error?.status, r.body.error?.message);
     if (r.status === 429) throw new AIUnavailableError("O limite gratuito de leituras por foto foi atingido. Tente mais tarde ou preencha manualmente.");
+    if (r.status === 404) throw new AIUnavailableError(`O modelo de IA "${this.model}" não está disponível para esta chave.`);
     if (r.status === 400 || r.status === 401 || r.status === 403) {
-      console.error("[ia] Gemini recusou a chamada:", r.status, r.body.error?.message);
-      throw new AIUnavailableError("A leitura por foto está mal configurada (chave ou modelo da IA).");
+      const why = /api key|API_KEY/i.test(r.body.error?.message ?? "") ? "a chave do Gemini foi recusada" : "o Gemini recusou o pedido";
+      throw new AIUnavailableError(`Leitura por foto indisponível: ${why} (erro ${r.status}).`);
     }
     if (r.status >= 500 || !r.body.candidates) {
       if (r.body.promptFeedback?.blockReason) return { legivel: false, texto_lido: "", eventos: [] };

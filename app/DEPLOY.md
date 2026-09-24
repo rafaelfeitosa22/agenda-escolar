@@ -56,7 +56,7 @@ O bucket privado `agenda-fotos` é criado automaticamente no primeiro envio de f
    | `MAX_UPLOAD_MB` | `4` (a Vercel aceita até 4,5 MB por requisição; o app já reduz a foto no celular) |
    | `AI_PROVIDER` | `anthropic` (Claude) ou `gemini` (Google) |
    | `ANTHROPIC_API_KEY` / `AI_MODEL` | com `anthropic`: chave de https://console.anthropic.com e `claude-opus-5` |
-   | `GEMINI_API_KEY` / `GEMINI_MODEL` | com `gemini`: chave de https://aistudio.google.com/apikey e `gemini-2.5-flash` |
+   | `GEMINI_API_KEY` / `GEMINI_MODEL` | com `gemini`: chave de https://aistudio.google.com/apikey e `gemini-3.6-flash` |
    | `APP_URL` | a URL do app na Vercel, ex.: `https://agendaceneb.vercel.app` |
    | `CLASS_CREATOR_EMAILS` | e-mail(s) de quem pode criar turmas, separados por vírgula |
 

@@ -19,7 +19,7 @@ type GeminiResponse = {
 export class GeminiAgendaAI implements AgendaAIService {
   readonly name = "gemini";
   private key = process.env.GEMINI_API_KEY ?? "";
-  private model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  private model = process.env.GEMINI_MODEL || "gemini-3.6-flash";
 
   private async call(image: AgendaImage, ctx: ExtractContext, withSchema: boolean) {
     const res = await fetch(`${BASE}/${encodeURIComponent(this.model)}:generateContent`, {
